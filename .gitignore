@@ -1,0 +1,22 @@
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Test artefacts
+tests/**/output/
+tests/**/*.tmp
+
+# Local plugin install symlinks (consumers create these per machine)
+.claude/skills/
+~/.codex/skills/
+
+# Secrets — should never be committed
+.env
+.env.local
+*.secret
+
+# Build artefacts
+node_modules/
+dist/
