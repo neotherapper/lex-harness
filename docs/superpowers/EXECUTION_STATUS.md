@@ -43,7 +43,7 @@ After T4 the foundation wave is complete. The repo is on GitHub at https://githu
 
 | Task | Status | Branch / PR | Notes |
 |---|---|---|---|
-| T5 | ⏳ NOT STARTED | — | `law-packs/greece/pack.json` |
+| T5 | ✅ DONE | PR #3 → `9c8899b` | `law-packs/greece/pack.json` (executed by a parallel session) |
 | T6 | ⏳ NOT STARTED | — | `law-packs/greece/MODULE_INDEX.md` |
 | T7 | ⏳ NOT STARTED | — | `forums.yaml` + `limitation_periods.yaml` + `playbook.yaml` + `glossary.md` |
 | T8 | ⏳ NOT STARTED | — | Greek core articles part 1 (10 of 22): AK_173 → AK_330 |

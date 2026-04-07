@@ -14,14 +14,15 @@ The plugin has 3 layers:
 
 ## Current state
 
-The **foundation wave (T1–T4) is complete**:
+> **Authoritative:** always check `docs/superpowers/EXECUTION_STATUS.md` for the canonical task list with commit SHAs. The summary below is a snapshot and may lag behind the status doc.
 
 - ✅ T1 — repo + `.gitignore`
 - ✅ T2 — `.claude-plugin/plugin.json`
 - ✅ T3 — README + LICENSE (MIT) + CHANGELOG + CONTRIBUTING + CODE_OF_CONDUCT
 - ✅ T4 — Law pack contract (`law-packs/_schema.md` + `docs/JURISDICTION_PACK_SPEC.md`)
+- ✅ T5 — Greek pack manifest (`law-packs/greece/pack.json`)
 
-The **next task is T5**: create `law-packs/greece/pack.json` (the Greek pack manifest).
+The **next task is T6**: `law-packs/greece/MODULE_INDEX.md` — the routing table (task → modules, SA → modules, forum preconditions).
 
 ## Mandatory first reads for a fresh session
 
