@@ -10,7 +10,10 @@ tests/**/*.tmp
 
 # Local plugin install symlinks (consumers create these per machine)
 .claude/skills/
-~/.codex/skills/
+# Note: ~/.codex/skills/ lives outside the repo, no ignore needed
+
+# Claude Code per-user local settings (never commit)
+.claude/settings.local.json
 
 # Secrets — should never be committed
 .env
