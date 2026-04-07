@@ -1,0 +1,86 @@
+# Greek pack — limitation periods
+# Schema: see law-packs/_schema.md §limitation_periods.yaml
+
+limitations:
+  - id: AK_602-rental-deposit
+    description: >-
+      6-month deadline for landlord claims arising from the lease
+      (rent damages, security deposit set-off). Controls every CH/CC.
+    statute: AK_602
+    period_days: 180
+    accrual_event: >-
+      Date the leased property is returned to the landlord (end of
+      tenancy).
+    interruption_methods:
+      - filing of αγωγή in civil court
+      - service of εξώδικη δήλωση followed by αγωγή within 6 months
+      - written acknowledgment of debt by landlord
+      - judicial settlement
+    notes: >-
+      The DEADLINE that controls every Greek deposit case. Tracked as
+      DL-01 by default in every case scaffolded by /lex-harness:init.
+
+  - id: AK_249-general
+    description: General 20-year prescription
+    statute: AK_249
+    period_days: 7305
+    accrual_event: When the claim becomes actionable
+    interruption_methods:
+      - lawsuit
+      - written acknowledgment of debt
+    notes: Catch-all baseline.
+
+  - id: AK_250-five-year
+    description: 5-year prescription for periodic payments (rent, utilities)
+    statute: AK_250
+    period_days: 1826
+    accrual_event: When each periodic payment fell due
+    interruption_methods:
+      - lawsuit
+      - written acknowledgment
+    notes: Applies to counterclaims for unpaid rent or services.
+
+  - id: AK_937-tort
+    description: 5-year prescription for tort claims (Art. 914 ΑΚ)
+    statute: AK_937
+    period_days: 1826
+    accrual_event: >-
+      When the injured party became aware of the injury and the
+      identity of the tortfeasor.
+    interruption_methods:
+      - lawsuit
+      - written acknowledgment
+    notes: Used for moral damages and personality-rights claims.
+
+  - id: GDPR_82-damages
+    description: GDPR damages claim (Art. 82)
+    statute: GDPR_Art_82
+    period_days: 1826
+    accrual_event: When the data subject became aware of the violation
+    interruption_methods:
+      - HDPA complaint filing
+      - civil αγωγή
+    notes: 5-year alignment with Greek tort prescription.
+
+  - id: gdpr-sar-response
+    description: 30-day deadline for controller to respond to Art. 15 SAR
+    statute: GDPR_Art_12_3
+    period_days: 30
+    accrual_event: Date the SAR was received by the controller
+    interruption_methods: []
+    notes: >-
+      Soft deadline (response window, not limitation). Triggers the
+      ripeness precondition for HDPA complaint.
+
+  - id: art-52-kpold-criminal-suspension
+    description: >-
+      NOT a limitation period — a procedural blocking rule.
+      Filing criminal complaint suspends civil proceedings.
+    statute: KPolD_52
+    period_days: null
+    accrual_event: null
+    interruption_methods: []
+    notes: >-
+      Encoded here for visibility. Strategy must order civil before
+      criminal. Enforced via forums.yaml precondition_type:
+      statutory_blocking on criminal-complaint.

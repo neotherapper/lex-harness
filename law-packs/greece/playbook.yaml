@@ -1,0 +1,138 @@
+# Greek pack — common plays
+# Schema: see law-packs/_schema.md §playbook.yaml
+# Source: extracted from the 50-play yestay playbook, generalised to
+# be case-agnostic but Greek-jurisdiction-specific.
+
+plays:
+  - id: GR-P01
+    name: Art. 602 ΑΚ deadline leverage
+    forum: phase3-demand-letter
+    description: >-
+      Greek law gives landlords only 6 months from key handover to
+      bring damage claims (Art. 602 ΑΚ). Use the approaching deadline
+      as leverage in every demand letter and settlement negotiation.
+    requires_state: deposit-dispute-active
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: ongoing
+    cited_articles:
+      - AK_602
+    universality: jurisdiction-universal-pattern
+    notes: Loaded by default in every Greek case.
+
+  - id: GR-P02
+    name: Lost records adverse inference (Art. 339-340 ΚΠολΔ)
+    forum: civil-court-eirinodikio
+    description: >-
+      When the landlord cannot produce a check-in inventory list or
+      check-out joint inspection record, Greek civil procedure permits
+      the court to draw an adverse inference (Art. 339, 340, 366, 450
+      ΚΠολΔ). The absence of documentation is itself evidence.
+    requires_state: opposing-party-cannot-produce-inventory
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: instant
+    cited_articles:
+      - KPolD_339
+      - KPolD_340
+      - KPolD_366
+      - KPolD_450
+      - AK_330
+    universality: greek-civil-procedure
+    notes: >-
+      Pairs with the universal "absence is evidence" principle.
+
+  - id: GR-P03
+    name: Set-off calculation (Art. 440-452 ΑΚ συμψηφισμός)
+    forum: phase3-demand-letter
+    description: >-
+      Greek civil code allows mutual debts to be extinguished by
+      declaration of set-off (Art. 440-452 ΑΚ), with retroactive effect
+      to the date both became due (Art. 442). Always present as a
+      single table so the math is visible.
+    requires_state: counterclaims-totalled
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: instant
+    cited_articles:
+      - AK_440_452
+    universality: jurisdiction-universal-pattern
+    notes: Strongest negotiation lever — flips "you owe nothing" to "you owe X".
+
+  - id: GR-P04
+    name: Consumer protection burden flip (Law 2251/1994 Art. 9c, 9e)
+    forum: consumer-ombudsman
+    description: >-
+      When the opposing party is a professional supplier and the user
+      is a private consumer, Greek consumer-protection law reverses
+      the burden of proof on unfair commercial practices. Supplier
+      must affirmatively prove its conduct was fair.
+    requires_state: opposing-party-is-professional-supplier
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: weeks
+    cited_articles:
+      - Law_2251_1994_Art_9c
+      - Law_2251_1994_Art_9e
+    universality: eu-directive-2005-29
+    notes: Free, non-binding, creates written record of unfair-practice findings.
+
+  - id: GR-P05
+    name: Betterment rule (ΕφΑθ 3994/2005 + ΑΠ 777/2022)
+    forum: civil-court-eirinodikio
+    description: >-
+      Greek case law caps recovery at the depreciated value
+      (αποκατάσταση όχι πλουτισμός — restoration, not enrichment).
+      Always demand depreciation calculations on every charged item.
+    requires_state: any-damage-charge
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: instant
+    cited_articles:
+      - AK_297
+      - AK_298
+      - AK_904
+    case_law:
+      - "ΑΠ 777/2022"
+      - "ΕφΑθ 3994/2005"
+      - "ΑΠ 985/2020"
+    universality: civil-law-restitution-principle
+    notes: Combine with the universal "no depreciation = unjust enrichment" principle.
+
+  - id: GR-P06
+    name: Itemisation requirement (ΑΠ 1597/1995)
+    forum: phase3-demand-letter
+    description: >-
+      Greek case law (foundational ΑΠ 1597/1995) requires landlord
+      claims to be itemised — quantity, type, unit cost. Lump-sum
+      claims are αόριστες (legally indeterminate) and fatal.
+    requires_state: opposing-party-served-lump-sum-claim
+    blocked_by: []
+    typical_cost: 0
+    typical_duration: instant
+    cited_articles:
+      - AK_330
+      - KPolD_338
+    case_law:
+      - "ΑΠ 1597/1995"
+    universality: greek-civil-procedure
+    notes: An αόριστη claim cannot be cured at trial — must be re-filed.
+
+  - id: GR-P07
+    name: Spin-off joint liability (Art. 65 §4 N. 4601/2019)
+    forum: civil-court-eirinodikio
+    description: >-
+      When the opposing entity has been spun off, Greek corporate law
+      makes both entities jointly and severally liable for 5 years.
+      Always name BOTH companies as defendants in the αγωγή.
+    requires_state: opposing-party-underwent-spin-off
+    blocked_by: []
+    typical_cost: court-fee-doubled-for-second-defendant
+    typical_duration: case-lifetime
+    cited_articles:
+      - N_4601_2019_Art_65
+      - N_4601_2019_Art_70
+    case_law:
+      - "ΑΠ 362/2023"
+    universality: eu-cross-border-mergers-directive
+    notes: Universal succession means notification gaps cannot be cured.
