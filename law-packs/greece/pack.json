@@ -1,0 +1,65 @@
+{
+  "name": "greece",
+  "version": "0.1.0",
+  "language": "el",
+  "country_code": "GR",
+  "display_name": "Greece — Civil Law (Αστικός Κώδικας + ΚΠολΔ)",
+  "description": "Greek civil law pack covering rental disputes, consumer protection, GDPR enforcement, tort/moral damages, corporate (spin-off) liability, tax/invoice compliance, criminal/regulatory escalation, and Eirinodikio procedure. MVP for the lex-harness plugin.",
+  "default_modules": [
+    "tenancy",
+    "tax_invoices",
+    "corporate"
+  ],
+  "available_modules": [
+    "tenancy",
+    "consumer_protection",
+    "gdpr",
+    "tort_damages",
+    "corporate",
+    "tax_invoices",
+    "criminal_regulatory",
+    "procedure_eirinodikio"
+  ],
+  "mcp_servers": [
+    {
+      "name": "eur-lex",
+      "purpose": "EUR-Lex CELEX retrieval for GDPR + CJEU",
+      "required": false
+    },
+    {
+      "name": "cerebra-legal",
+      "purpose": "Greek consumer-protection legal reasoning templates",
+      "required": false
+    },
+    {
+      "name": "chrome-devtools",
+      "purpose": "Live web evidence capture (kodiko.gr, areiospagos.gr, dpa.gr SPA)",
+      "required": false
+    },
+    {
+      "name": "neo4j-memory",
+      "purpose": "Multi-hop fact relationship queries",
+      "required": false
+    }
+  ],
+  "forum_rules_file": "forums.yaml",
+  "limitation_periods_file": "limitation_periods.yaml",
+  "playbook_file": "playbook.yaml",
+  "glossary_file": "glossary.md",
+  "module_index_file": "MODULE_INDEX.md",
+  "primary_sources": {
+    "statute_articles": "https://www.kodiko.gr/",
+    "verification": "https://www.lawspot.gr/",
+    "fek_gazette": "https://search.et.gr/",
+    "ap_decisions": "https://www.areiospagos.gr/",
+    "eu_law": "https://eur-lex.europa.eu/",
+    "hdpa_decisions": "https://www.dpa.gr/"
+  },
+  "maintainer": {
+    "name": "Georgios Pilitsoglou",
+    "url": "https://github.com/neotherapper"
+  },
+  "schema_version": "1.0",
+  "created": "2026-04-07",
+  "last_updated": "2026-04-07"
+}
