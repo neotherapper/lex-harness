@@ -1,0 +1,23 @@
+{
+  "name": "lex-harness",
+  "version": "0.1.0",
+  "description": "Open-source AI legal harness for civil disputes. Verbatim citations, fact integrity, devil's advocate review, jurisdiction-aware law packs. Ships with Greek law pack; extensible to any country.",
+  "author": {
+    "name": "Georgios Pilitsoglou",
+    "url": "https://github.com/neotherapper"
+  },
+  "homepage": "https://github.com/neotherapper/lex-harness#readme",
+  "repository": "https://github.com/neotherapper/lex-harness",
+  "license": "MIT",
+  "keywords": [
+    "legal",
+    "law",
+    "litigation",
+    "civil-dispute",
+    "greek-law",
+    "harness",
+    "devils-advocate",
+    "citation-verification",
+    "jurisdiction-aware"
+  ]
+}
