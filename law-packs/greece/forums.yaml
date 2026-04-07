@@ -1,0 +1,94 @@
+# Greek pack — forum precondition rules
+# Schema: see law-packs/_schema.md §forums.yaml
+
+forums:
+  - id: phase3-demand-letter
+    name: Phase 3 demand letter (εξώδικη δήλωση / πρόσκληση)
+    type: pre-litigation
+    precondition_type: none
+    must_complete_first: []
+    notes: >-
+      Greek pre-litigation formal notice. No statutory blocker. Used to
+      trigger Art. 602 ΑΚ tolling, document bad faith, and establish
+      admissibility of subsequent forums. Default first forum.
+
+  - id: civil-court-eirinodikio
+    name: Civil court — Eirinodikio (αγωγή)
+    type: civil-litigation
+    precondition_type: statutory_blocking
+    must_complete_first: []
+    blocked_by_other_action:
+      - forum: criminal-complaint
+        statute: Art. 52 KPolD
+        effect: >-
+          If criminal complaint is filed first on the same facts, civil
+          proceedings are SUSPENDED until the criminal case completes.
+          Strategy must therefore file civil αγωγή BEFORE criminal.
+    notes: >-
+      Default civil forum for deposit disputes ≤ €20,000 (Art. 14 ΚΠολΔ).
+      Art. 602 ΑΚ 6-month limitation controls deadline.
+
+  - id: consumer-ombudsman
+    name: Consumer Ombudsman (Συνήγορος Καταναλωτή)
+    type: regulatory-non-binding
+    precondition_type: strategic_recommended
+    must_complete_first:
+      - phase3-demand-letter
+    notes: >-
+      Free, non-binding mediation. Adds pressure without committing to
+      court. Skill flags risk if filed without prior demand letter.
+
+  - id: hdpa-complaint
+    name: Hellenic Data Protection Authority complaint
+    type: regulatory-binding
+    precondition_type: strategic_recommended
+    must_complete_first:
+      - gdpr-sar-art-15
+    notes: >-
+      Filed AFTER Art. 15 GDPR Subject Access Request has been sent and
+      either ignored or partially fulfilled past the 30-day deadline.
+
+  - id: gdpr-sar-art-15
+    name: GDPR Subject Access Request (Art. 15)
+    type: pre-regulatory
+    precondition_type: none
+    must_complete_first: []
+    notes: >-
+      Always permitted. The 30-day controller response deadline starts
+      on receipt. Tracked via DEADLINE_REGISTER.md as a soft deadline.
+
+  - id: aade-referral
+    name: AADE tax authority referral
+    type: regulatory-binding
+    precondition_type: strategic_recommended
+    must_complete_first:
+      - phase3-demand-letter
+      - forensic-invoice-analysis
+    notes: >-
+      Forensic-grade analysis must be complete before AADE referral.
+
+  - id: criminal-complaint
+    name: Criminal complaint (μήνυση — ΠΚ 386 fraud / ΠΚ 216 forgery)
+    type: criminal
+    precondition_type: statutory_blocking
+    must_complete_first:
+      - civil-court-eirinodikio
+    blocks_other_action:
+      - forum: civil-court-eirinodikio
+        statute: Art. 52 KPolD
+        effect: >-
+          Filing criminal complaint freezes civil proceedings. Therefore
+          ALWAYS file civil αγωγή first; criminal is the last forum.
+    notes: >-
+      The "criminal last" doctrine. Universal layer 1 principle, with
+      Greek-specific manifestation via Art. 52 KPolD. Skill MUST refuse
+      to recommend criminal forum until civil αγωγή is filed.
+
+  - id: sepe-asbestos-referral
+    name: Labour Inspectorate (ΣΕΠΕ) asbestos / safety referral
+    type: regulatory-binding
+    precondition_type: none
+    must_complete_first: []
+    notes: >-
+      Independent of civil proceedings. Used for ΠΔ 212/2006 violations.
+      Free to file in parallel with anything else.
