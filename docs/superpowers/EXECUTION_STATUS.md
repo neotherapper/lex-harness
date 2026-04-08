@@ -2,9 +2,9 @@
 
 > **Single source of truth for plan execution progress.** Update this file after every task completion. Read it before starting a new session.
 
-**Last updated:** 2026-04-07
-**Current wave:** Greek pack content (T5–T10) ✅ COMPLETE
-**Next task:** T11 — `skills/legal-strategy/SKILL.md`
+**Last updated:** 2026-04-08
+**Current wave:** Scripts layer ✅ COMPLETE
+**Next task:** T11 — `skills/legal-strategy/SKILL.md` (original plan) or knowledge base content porting (Plan B)
 
 ---
 
@@ -49,6 +49,12 @@ After T4 the foundation wave is complete. The repo is on GitHub at https://githu
 | T8 | ✅ DONE | PR #7 → `4a85934` | Greek core articles part 1 (10 of 22): AK_173 → AK_330 |
 | T9 | ✅ DONE | PR #7 → `4a85934` | Greek core articles part 2 (12 of 22): AK_440-452 + AK_602/904/914/932 + KPolD + Syntagma |
 | T10 | ✅ DONE | PR #8 → `2d38a28` | Greek tenancy module (8 articles + case_law_inline) |
+
+### Scripts + knowledge-base design wave — COMPLETE ✅
+
+| Task | Status | PR | Notes |
+|---|---|---|---|
+| T11-scripts | ✅ DONE | PR #9 → `1164548` | Scripts layer: `jurisdiction.yaml`, Fire+UV CLI, BaseFetcher/registry/facade/settings, Greek fetchers (kodiko/et_gr/gslegal/hellenicparliament), shared EU fetchers (eur_lex/n_lex), `/lex-harness:setup` + `/lex-harness:fetch` commands, `lint_knowledge.py`, integration test scaffold. 24 unit tests passing. Design spec: `docs/superpowers/specs/2026-04-08-scripts-knowledge-base-design.md`. Plan: `docs/superpowers/plans/2026-04-08-scripts-layer.md`. |
 
 ### Skill body wave — NOT STARTED
 
