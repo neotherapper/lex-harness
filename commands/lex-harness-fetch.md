@@ -6,7 +6,7 @@ allowed-tools: Bash(uv:*)
 
 Fetching law article $1...
 
-!`uv run ${CLAUDE_PLUGIN_ROOT}/scripts/laws.py fetch $1`
+!`uv run ${CLAUDE_PLUGIN_ROOT}/scripts/laws.py fetch "$1"`
 
 Report the fetched text. If the output starts with `[UNVERIFIED`, explain:
 - All configured sources failed to return text

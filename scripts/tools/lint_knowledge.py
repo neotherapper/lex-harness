@@ -44,13 +44,21 @@ _BANNED_RE = re.compile("|".join(_BANNED_PATTERNS))
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
 
 
-def _parse_fm(path: Path) -> dict:
+def _parse_fm(path: Path) -> dict | None:
     match = _FRONTMATTER_RE.match(path.read_text(encoding="utf-8"))
-    return yaml.safe_load(match.group(1)) if match else {}
+    if not match:
+        return {}
+    try:
+        return yaml.safe_load(match.group(1)) or {}
+    except yaml.YAMLError as exc:
+        return None  # caller appends error
 
 
 def lint(check_urls: bool = False) -> None:
     """Run all lint checks on docs/knowledge/."""
+    if not _KNOWLEDGE_DIR.exists():
+        print(f"ERROR: knowledge directory not found: {_KNOWLEDGE_DIR}", file=sys.stderr)
+        sys.exit(2)
     errors: list[str] = []
     files = list(_KNOWLEDGE_DIR.rglob("*.md"))
 
@@ -62,6 +70,9 @@ def lint(check_urls: bool = False) -> None:
         rel = path.relative_to(_REPO_ROOT)
         text = path.read_text(encoding="utf-8")
         fm = _parse_fm(path)
+        if fm is None:
+            errors.append(f"{rel}: invalid YAML in frontmatter")
+            continue
 
         # Check required fields
         for field in _REQUIRED_FIELDS:
