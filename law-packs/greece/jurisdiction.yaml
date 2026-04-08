@@ -1,0 +1,71 @@
+# law-packs/greece/jurisdiction.yaml
+# Jurisdiction configuration object per REQ-02-010
+# Skills and scripts read this file — do not hardcode these values elsewhere.
+
+jurisdiction_id: "GR"
+display_name: "Greek Law (Ελληνικό Δίκαιο)"
+pack_dir: "law-packs/greece"
+
+primary_authoritative_sources:
+  - source_id: et_gr
+    name: "Εθνικό Τυπογραφείο (et.gr)"
+    url: "https://www.et.gr"
+    type: official_gazette
+    notes: "Primary authority — ΦΕΚ PDFs. Use DownloadFeksApi endpoint."
+  - source_id: kodiko
+    name: "kodiko.gr"
+    url: "https://www.kodiko.gr"
+    type: consolidated_code
+    notes: "Codified statutes (AK, KPolD, ΠΚ). URL: /nomothesia/document/{id}/{slug}"
+  - source_id: gslegal
+    name: "gslegal.gov.gr — Εθνική Πύλη Κωδικοποίησης"
+    url: "https://www.gslegal.gov.gr"
+    type: codification_portal
+    notes: "National Codification Portal — General Secretariat for Legal Affairs."
+  - source_id: hellenicparliament
+    name: "Hellenic Parliament (Βουλή)"
+    url: "https://www.hellenicparliament.gr"
+    type: enacted_legislation
+    notes: "Enacted bills and voting records. Portal instability noted 2026-04-08."
+
+fallback_sources:
+  - source_id: eur_lex
+    name: "EUR-Lex"
+    url: "https://eur-lex.europa.eu"
+    type: eu_law
+    notes: "EU regulations + directives. Use CELEX numbers. MCP available."
+
+source_priority:
+  - et_gr
+  - kodiko
+  - gslegal
+  - hellenicparliament
+  - eur_lex
+
+trusted_source_whitelist:
+  - et.gr
+  - search.et.gr
+  - kodiko.gr
+  - gslegal.gov.gr
+  - hellenicparliament.gr
+  - eur-lex.europa.eu
+  - areiospagos.gr
+  - dsanet.gr
+  - lawspot.gr
+
+mandatory_citation_formats:
+  statute: "Art. {number} {code} (ΦΕΚ {series}/{year}/{number})"
+  case: "{court} {number}/{year}"
+  eu_law: "CELEX:{celex} — {eur_lex_url}"
+
+gazette_source: "ΦΕΚ"
+gazette_url: "https://www.et.gr"
+update_frequency: "weekly"
+
+article_id_prefixes:
+  - "AK_"
+  - "KPolD_"
+  - "N_"
+  - "PD_"
+  - "MD_"
+  - "Syntagma_"
