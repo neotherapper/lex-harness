@@ -23,3 +23,9 @@ tests/**/*.tmp
 # Build artefacts
 node_modules/
 dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
