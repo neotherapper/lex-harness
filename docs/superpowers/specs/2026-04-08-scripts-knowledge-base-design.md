@@ -20,7 +20,8 @@
 
 - **Stable public API:** the Fire CLI commands (`fetch`, `verify`, `build`, `status`, `sources`) never change. Only the implementations behind the facade change.
 - **Country-modular:** adding `uk/` or `de/` is purely additive — no changes to core, facade, or CLI.
-- **Plugin setup:** `plugin.json` has no `postInstall` hook. Setup is triggered by a `/lex-harness:setup` command + CLAUDE.md instruction.
+- **Plugin install model:** users install via `/plugin install neotherapper/lex-harness`. Plugin files land in `~/.claude/plugins/cache/lex-harness/`. Users never clone the repo. Scripts are referenced via the `${CLAUDE_PLUGIN_ROOT}` env var that Claude Code expands in commands.
+- **Plugin setup:** `plugin.json` has no `postInstall` hook. Setup runs via `/lex-harness:setup` command which uses `${CLAUDE_PLUGIN_ROOT}` to find and sync the UV environment.
 - **EU fetchers are shared:** EUR-Lex and N-Lex cover all EU member states. They live in `scripts/shared/` and each country opts in via its `__init__.py`.
 - **No case-specific content in lex-harness:** all content ported from yestay must be stripped of George/YESTAY/VIAMAR references, property addresses, charge codes, and specific monetary amounts.
 
@@ -196,17 +197,37 @@ uv run scripts/laws.py fetch AK_592 --country greece
 | Layer | File | Owner | Purpose |
 |---|---|---|---|
 | Defaults | `scripts/greece/constants.py` | Plugin maintainer | Per-jurisdiction static defaults |
-| Override | `.lex-harness.json` | User (case repo) | Per-case settings, created by `/lex-harness:init` |
+| Override | `.claude/lex-harness.local.md` | User (case repo) | Per-case settings, created by `/lex-harness:init` |
 
-User-supplied values in `.lex-harness.json` **always win**. `source_priority` in the user file completely replaces the constant (no merge).
+This follows the standard Claude Code plugin-settings pattern: a `.claude/<plugin-name>.local.md` file with YAML frontmatter in the user's project directory. User-supplied values **always win**. `source_priority` in the user file completely replaces the constant (no merge).
 
-### 4.2 Settings Object
+### 4.2 Settings File Format (`.claude/lex-harness.local.md`)
+
+```markdown
+---
+jurisdiction: greece
+case_id: my-rental-dispute
+forum: eirino
+source_priority:
+  - et_gr
+  - kodiko
+  - gslegal
+  - eur_lex
+---
+
+# My Case Notes
+Free-form notes about this case for reference.
+```
+
+Created by `/lex-harness:init`. Users edit `source_priority` to override fetch order. The file is gitignored by default (case-specific).
+
+### 4.3 Settings Object
 
 ```python
 # scripts/core/settings.py
 from dataclasses import dataclass, field
 from pathlib import Path
-import json
+import re
 
 @dataclass
 class LexSettings:
@@ -217,13 +238,13 @@ class LexSettings:
 
 def load_settings(country_override: str | None = None) -> LexSettings:
     """
-    Walk up from CWD to find .lex-harness.json (like ESLint config discovery).
-    Merge with jurisdiction constants. CLI --country arg overrides everything.
+    Walk up from CWD to find .claude/lex-harness.local.md (standard plugin-settings pattern).
+    Parse YAML frontmatter. Merge with jurisdiction constants.
+    CLI --country arg overrides everything.
+    Falls back to 'greece' if no settings found (MVP default).
     """
-    config = _find_config()  # returns {} if not found
-    jurisdiction = country_override or config.get("jurisdiction") or _default_jurisdiction()
-
-    # import constants for the resolved jurisdiction
+    config = _parse_local_md()   # returns {} if not found
+    jurisdiction = country_override or config.get("jurisdiction") or "greece"
     constants = _load_constants(jurisdiction)
 
     return LexSettings(
@@ -233,19 +254,6 @@ def load_settings(country_override: str | None = None) -> LexSettings:
         source_priority=config.get("source_priority") or constants["SOURCE_PRIORITY"],
     )
 ```
-
-### 4.3 Example `.lex-harness.json` (created by `/lex-harness:init`)
-
-```json
-{
-  "jurisdiction": "greece",
-  "case_id": "my-rental-dispute",
-  "forum": "eirino",
-  "source_priority": ["et_gr", "kodiko", "gslegal", "eur_lex"]
-}
-```
-
-To override source priority, the user edits `source_priority` in this file. The constants default for Greece is `["et_gr", "kodiko", "gslegal", "hellenicparliament", "eur_lex"]`.
 
 ### 4.4 Greece Constants
 
@@ -265,18 +273,41 @@ HEADERS = {
 
 ## 5. Plugin Setup
 
-`plugin.json` has no `postInstall` hook — this is true across all official Claude Code plugins. Setup is handled two ways:
+`plugin.json` has no `postInstall` hook — confirmed across all official Claude Code plugins. Setup uses the `${CLAUDE_PLUGIN_ROOT}` env var, which Claude Code expands in commands to the plugin's installed path (`~/.claude/plugins/cache/lex-harness/`).
 
-1. **CLAUDE.md instruction** (already the authoritative session-start doc): add a note that if `scripts/.venv` is absent, Claude runs `uv sync --directory scripts/` before any script command.
-2. **`/lex-harness:setup` command**: a dedicated slash command that runs `uv sync --directory scripts/` and confirms the environment is ready. Documented in README as the first command to run after installing the plugin.
+**`/lex-harness:setup` command** (in `commands/lex-harness-setup.md`):
 
-```bash
-# After plugin install:
-/lex-harness:setup        # runs uv sync, checks all fetchers import cleanly
+```markdown
+---
+description: Set up the lex-harness Python environment (run once after install)
+allowed-tools: Bash(uv:*)
+---
 
-# Then:
-uv run scripts/laws.py status
+Setting up lex-harness scripts environment:
+
+!`uv sync --directory ${CLAUDE_PLUGIN_ROOT}/scripts`
+
+Verify setup:
+!`uv run --directory ${CLAUDE_PLUGIN_ROOT}/scripts python -c "import fire, httpx, yaml; print('OK')"`
+
+Report the result. If successful, the user can now run:
+  uv run ${CLAUDE_PLUGIN_ROOT}/scripts/laws.py status
 ```
+
+**Plugin commands** reference scripts via `${CLAUDE_PLUGIN_ROOT}`:
+
+```markdown
+# commands/lex-harness-fetch.md
+---
+description: Fetch verbatim text for a Greek law article
+argument-hint: [article-id]
+allowed-tools: Bash(uv:*)
+---
+
+!`uv run ${CLAUDE_PLUGIN_ROOT}/scripts/laws.py fetch $1`
+```
+
+Users run `/lex-harness:setup` once after installing the plugin. All subsequent commands work without any path knowledge.
 
 ---
 
@@ -356,7 +387,8 @@ docs/knowledge/
 | S3 | `scripts/core/` | base, registry, facade, settings (4 files) |
 | S4 | `scripts/shared/` | EurLexFetcher, NLexFetcher |
 | S5 | `scripts/greece/` | constants + 4 fetcher implementations |
-| S6 | `commands/lex-harness-setup.md` | `/lex-harness:setup` slash command |
+| S6 | `commands/lex-harness-setup.md` | `/lex-harness:setup` — runs `uv sync` via `${CLAUDE_PLUGIN_ROOT}` |
+| S7 | `commands/lex-harness-fetch.md` | `/lex-harness:fetch [id]` — invokes `laws.py fetch` via plugin root |
 | K1 | `docs/knowledge/README.md` | Knowledge base index |
 | K2 | `docs/knowledge/LEGAL_AI_FRAMEWORK.md` | Ported, stripped |
 | K3 | `docs/knowledge/greece/CORPUS_MAP.md` | Ported, stripped |
