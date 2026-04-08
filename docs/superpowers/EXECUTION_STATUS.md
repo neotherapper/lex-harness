@@ -3,8 +3,8 @@
 > **Single source of truth for plan execution progress.** Update this file after every task completion. Read it before starting a new session.
 
 **Last updated:** 2026-04-08
-**Current wave:** Scripts layer ✅ COMPLETE
-**Next task:** T11 — `skills/legal-strategy/SKILL.md` (original plan) or knowledge base content porting (Plan B)
+**Current wave:** Scripts layer + Knowledge base ✅ COMPLETE
+**Next task:** T11 — `skills/legal-strategy/SKILL.md` (original plan)
 
 ---
 
@@ -55,6 +55,7 @@ After T4 the foundation wave is complete. The repo is on GitHub at https://githu
 | Task | Status | PR | Notes |
 |---|---|---|---|
 | T11-scripts | ✅ DONE | PR #9 → `1164548` | Scripts layer: `jurisdiction.yaml`, Fire+UV CLI, BaseFetcher/registry/facade/settings, Greek fetchers (kodiko/et_gr/gslegal/hellenicparliament), shared EU fetchers (eur_lex/n_lex), `/lex-harness:setup` + `/lex-harness:fetch` commands, `lint_knowledge.py`, integration test scaffold. 24 unit tests passing. Design spec: `docs/superpowers/specs/2026-04-08-scripts-knowledge-base-design.md`. Plan: `docs/superpowers/plans/2026-04-08-scripts-layer.md`. |
+| T12-knowledge | ✅ DONE | PR #10 → `510ba36` | Knowledge base: 15 docs in `docs/knowledge/` — LEGAL_AI_FRAMEWORK, REQUIREMENTS, greece/CORPUS_MAP, COURT_AUTHORITY, LAW_SOURCES, 8 source profiles (et_gr/kodiko/areiospagos/nomiki_vivliothiki/isocrates_dsanet/lawspot/eur_lex/n_lex), consumer_protection module. All case-specific content stripped; linter passes 15/15. |
 
 ### Skill body wave — NOT STARTED
 
