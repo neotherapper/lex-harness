@@ -9,9 +9,6 @@ _HEADERS = {
     "User-Agent": "lex-harness/0.1 (github.com/neotherapper/lex-harness)",
     "Accept-Language": "el,en;q=0.9",
 }
-# N-Lex has no public API — web only. Use ELI-based search when available.
-_N_LEX_SEARCH = "https://n-lex.europa.eu/n-lex/recherche/rechercheExpert?lang=en"
-
 
 class NLexFetcher(BaseFetcher):
     """Gateway to EU national law via N-Lex ELI-based search.

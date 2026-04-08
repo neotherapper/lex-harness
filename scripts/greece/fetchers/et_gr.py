@@ -1,7 +1,6 @@
 # scripts/greece/fetchers/et_gr.py
 import hashlib
 import time
-from pathlib import Path
 import httpx
 from scripts.core.base import BaseFetcher
 
@@ -18,6 +17,9 @@ class EtGrFetcher(BaseFetcher):
     def fetch(self, entry: dict) -> str:
         pdf_url = entry.get("et_gr_pdf_url")
         if not pdf_url:
+            # Deliberately raises ValueError (not a [GAZETTE-PENDING] sentinel) so the facade
+            # marks the entry UNVERIFIED. A sentinel string would pass through verify() as a
+            # sha256 mismatch rather than a clear retrieval failure.
             raise ValueError(
                 f"No et_gr_pdf_url for {entry.get('article_id')} — "
                 "gazette PDF URL required; manual download may be necessary"
