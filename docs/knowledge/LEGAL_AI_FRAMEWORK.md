@@ -1,7 +1,7 @@
 ---
 title: "Legal AI Framework — Architecture Design"
 scope: global
-source: "yestay/09_ai_research/LEGAL_AI_FRAMEWORK.md (adapted)"
+source: "docs/knowledge/LEGAL_AI_FRAMEWORK.md (adapted from internal case research — this file is the canonical reference)"
 last_verified: "2026-04-08"
 ---
 

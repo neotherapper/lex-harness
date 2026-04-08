@@ -1,7 +1,7 @@
 ---
 title: "AI Legal Harness Framework — Requirements"
 scope: global
-source: "yestay/docs/specs/AI-LEGAL-HARNESS-REQUIREMENTS.md (adapted)"
+source: "docs/knowledge/REQUIREMENTS.md (adapted from internal case research — this file is the canonical reference)"
 last_verified: "2026-04-08"
 ---
 
