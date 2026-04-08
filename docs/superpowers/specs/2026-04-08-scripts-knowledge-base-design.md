@@ -501,14 +501,16 @@ Run with: `uv run python scripts/tools/lint_knowledge.py`
 | **Missing jurisdiction** | No settings file + no `--country` flag → defaults to `"greece"` (MVP); logs a warning |
 | **Source not registered** | If user's `source_priority` includes a source that has no registered fetcher → warning, not error; skipped silently |
 
-### 10.3 CI Guardrails
+### 10.3 CI Guardrails (lex-harness repo only)
+
+These apply to **this repo** — contributors adding or updating law packs and knowledge docs. Plugin users' case repos have no CI obligation from lex-harness.
 
 | Check | When | Action on failure |
 |---|---|---|
-| SHA256 manifest verify | Weekly scheduled CI | Flag mismatches as `[LAW-AMENDED]`; open GitHub issue |
-| Knowledge base lint | Every PR touching `docs/knowledge/` | Block merge |
-| Unit tests | Every PR | Block merge |
+| Unit tests | Every PR to `scripts/` | Block merge |
 | `jurisdiction.yaml` schema | Every PR touching `law-packs/*/jurisdiction.yaml` | Block merge |
+| Knowledge base lint | Every PR touching `docs/knowledge/` or `law-packs/` | Block merge — enforces frontmatter + no case-specific content leaking in |
+| SHA256 manifest verify | Weekly scheduled run | Flag mismatches as `[LAW-AMENDED]`; open GitHub issue automatically so maintainers update affected articles |
 
 ---
 
