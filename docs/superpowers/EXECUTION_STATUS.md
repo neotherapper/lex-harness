@@ -3,8 +3,8 @@
 > **Single source of truth for plan execution progress.** Update this file after every task completion. Read it before starting a new session.
 
 **Last updated:** 2026-04-07
-**Current wave:** Foundation (T1–T4) ✅ COMPLETE
-**Next task:** T5 — Greek pack manifest
+**Current wave:** Greek pack content (T5–T10) ✅ COMPLETE
+**Next task:** T11 — `skills/legal-strategy/SKILL.md`
 
 ---
 
@@ -46,9 +46,9 @@ After T4 the foundation wave is complete. The repo is on GitHub at https://githu
 | T5 | ✅ DONE | PR #3 → `9c8899b` | `law-packs/greece/pack.json` (executed by a parallel session) |
 | T6 | ✅ DONE | PR #5 → `56321c1` | `law-packs/greece/MODULE_INDEX.md` |
 | T7 | ✅ DONE | PR #6 → `2ab90e5` | `forums.yaml` + `limitation_periods.yaml` + `playbook.yaml` + `glossary.md` |
-| T8 | ⏳ NOT STARTED | — | Greek core articles part 1 (10 of 22): AK_173 → AK_330 |
-| T9 | ⏳ NOT STARTED | — | Greek core articles part 2 (12 of 22): AK_440-452 + AK_602/904/914/932 + KPolD + Syntagma |
-| T10 | ⏳ NOT STARTED | — | Greek tenancy module (8 articles + case_law_inline) |
+| T8 | ✅ DONE | PR #7 → `4a85934` | Greek core articles part 1 (10 of 22): AK_173 → AK_330 |
+| T9 | ✅ DONE | PR #7 → `4a85934` | Greek core articles part 2 (12 of 22): AK_440-452 + AK_602/904/914/932 + KPolD + Syntagma |
+| T10 | ✅ DONE | PR #8 → `2d38a28` | Greek tenancy module (8 articles + case_law_inline) |
 
 ### Skill body wave — NOT STARTED
 
