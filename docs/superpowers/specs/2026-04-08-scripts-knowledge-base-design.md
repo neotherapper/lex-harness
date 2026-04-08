@@ -378,17 +378,176 @@ docs/knowledge/
 
 ---
 
-## 8. Deliverables Summary
+## 8. Jurisdiction Config Object (REQ-02-010 alignment)
+
+The formal requirements define **jurisdiction as a YAML config object** — not Python constants — so skills and agents can read it without importing Python. Our `constants.py` is superseded by `law-packs/greece/jurisdiction.yaml`, which the scripts import at runtime.
+
+```yaml
+# law-packs/greece/jurisdiction.yaml
+jurisdiction_id: "GR"
+display_name: "Greek Law (Ελληνικό Δίκαιο)"
+primary_authoritative_sources:
+  - source_id: et_gr
+    name: "Εθνικό Τυπογραφείο (et.gr)"
+    url: "https://www.et.gr"
+    type: official_gazette
+  - source_id: kodiko
+    name: "kodiko.gr"
+    url: "https://www.kodiko.gr"
+    type: consolidated_code
+  - source_id: gslegal
+    name: "gslegal.gov.gr"
+    url: "https://www.gslegal.gov.gr"
+    type: codification_portal
+  - source_id: hellenicparliament
+    name: "Hellenic Parliament"
+    url: "https://www.hellenicparliament.gr"
+    type: enacted_legislation
+fallback_sources:
+  - source_id: eur_lex
+    name: "EUR-Lex"
+    url: "https://eur-lex.europa.eu"
+    type: eu_law
+source_priority:
+  - et_gr
+  - kodiko
+  - gslegal
+  - hellenicparliament
+  - eur_lex
+trusted_source_whitelist:
+  - et.gr
+  - kodiko.gr
+  - gslegal.gov.gr
+  - hellenicparliament.gr
+  - eur-lex.europa.eu
+  - areiospagos.gr
+  - dsanet.gr
+  - lawspot.gr
+mandatory_citation_formats:
+  statute: "Art. {number} {code} (ΦΕΚ {series}/{year}/{number})"
+  case: "{court} {number}/{year}"
+  eu_law: "CELEX:{celex} — {eur_lex_url}"
+gazette_source: "ΦΕΚ / et.gr"
+gazette_url: "https://www.et.gr"
+update_frequency: "weekly"
+article_id_prefixes:
+  - "AK_"
+  - "KPolD_"
+  - "N_"
+  - "PD_"
+  - "MD_"
+pack_dir: "law-packs/greece"
+```
+
+`scripts/core/settings.py` loads this YAML to populate `source_priority`, the trusted whitelist, and citation formats. `scripts/greece/constants.py` is removed — `jurisdiction.yaml` is the single source of truth. Skills can read the same file directly with `@${CLAUDE_PLUGIN_ROOT}/law-packs/greece/jurisdiction.yaml`.
+
+---
+
+## 9. Tests
+
+### 9.1 Unit Tests (`scripts/tests/`)
+
+| Test file | What it covers |
+|---|---|
+| `test_registry.py` | `register()` + `resolve()` correct; `resolve()` raises `ValueError` for unknown country/source |
+| `test_settings.py` | Frontmatter parse; user `source_priority` wins over jurisdiction default; missing file falls back to "greece"; `--country` CLI arg overrides all |
+| `test_facade.py` | Source priority fallback with mock fetchers (first fails, second succeeds); all-fail raises `RuntimeError` |
+| `test_base.py` | Subclass without implementing `fetch()` / `verify()` raises `TypeError` |
+| `test_jurisdiction_yaml.py` | Each `law-packs/*/jurisdiction.yaml` validates against the schema; `source_priority` entries all present in `primary_authoritative_sources` + `fallback_sources` |
+
+Run with: `uv run pytest scripts/tests/ -v`
+
+### 9.2 Integration Tests (scheduled, not on every commit)
+
+Run against live sources on a weekly CI schedule to detect source breakage or law amendments:
+
+| Test | Source | What it checks |
+|---|---|---|
+| `test_fetch_kodiko_live.py` | kodiko.gr | Fetch AK_592 returns ≥ 200 chars of Greek text |
+| `test_fetch_et_gr_live.py` | et.gr | PDF download returns valid PDF bytes |
+| `test_sha256_manifest.py` | All fetchers | Re-verify all articles in manifest; flag sha256 mismatches as `[LAW-AMENDED]` |
+
+Run with: `uv run pytest scripts/tests/integration/ -v --live`
+
+### 9.3 Knowledge Base Lint Tests
+
+| Check | What it enforces |
+|---|---|
+| Required frontmatter fields | Every `.md` in `docs/knowledge/` has `title`, `jurisdiction` (or `scope: global`), `source`, `last_verified` |
+| No case-specific content | Regex scan for "George", "YESTAY", "VIAMAR", "Elliniko", "CH1", "CC1", "SA-31" — fail if found |
+| Broken source links | All `source:` URLs return HTTP 200 (or documented as subscription-only) |
+
+Run with: `uv run python scripts/tools/lint_knowledge.py`
+
+---
+
+## 10. Guardrails
+
+### 10.1 Fetch Guardrails (enforced in `BaseFetcher`)
+
+| Guardrail | Mechanism | Failure output |
+|---|---|---|
+| **Non-empty text** | `fetch()` raises if returned text < 50 chars | Calling facade catches → tries next source |
+| **Trusted source only** | `BaseFetcher.__init__` checks URL against `jurisdiction.yaml:trusted_source_whitelist` | Raises `ValueError` — not silently skipped |
+| **`[UNVERIFIED]` tag on all-source failure** | Facade wraps total failure in `[UNVERIFIED — all sources failed: {article_id}]` | Placeholder written to `.md`; SHA256 manifest marks as `needs-manual` |
+| **No training-memory fill** | `BaseFetcher.fetch()` must either return fetched text or raise — no `return` of a synthesised string | Enforced by code review + type annotation `-> str` (no `| None`) |
+| **`[GAZETTE-PENDING]` when PDF unavailable** | `EtGrFetcher` writes tag when PDF 404 | Logged to `FETCH_LOG.json`; session brief queues for human resolution |
+
+### 10.2 Settings Guardrails
+
+| Guardrail | Mechanism |
+|---|---|
+| **Unknown source_id in override** | `load_settings()` validates every entry in user's `source_priority` against `jurisdiction.yaml:primary_authoritative_sources + fallback_sources`; unknown entries raise `ValueError` with clear message |
+| **Missing jurisdiction** | No settings file + no `--country` flag → defaults to `"greece"` (MVP); logs a warning |
+| **Source not registered** | If user's `source_priority` includes a source that has no registered fetcher → warning, not error; skipped silently |
+
+### 10.3 CI Guardrails
+
+| Check | When | Action on failure |
+|---|---|---|
+| SHA256 manifest verify | Weekly scheduled CI | Flag mismatches as `[LAW-AMENDED]`; open GitHub issue |
+| Knowledge base lint | Every PR touching `docs/knowledge/` | Block merge |
+| Unit tests | Every PR | Block merge |
+| `jurisdiction.yaml` schema | Every PR touching `law-packs/*/jurisdiction.yaml` | Block merge |
+
+---
+
+## 11. Requirements Coverage
+
+Source: `yestay/docs/specs/AI-LEGAL-HARNESS-REQUIREMENTS.md` (129 requirements across 14 categories).
+
+This design covers the **scripts + knowledge base layer** (Layers 1+2 of the plugin). Requirements relating to case facts (T1/T2/T3), agent reasoning, human oversight, and strategy are addressed by skills (Layer 1 skills) and the case repo (Layer 3) — out of scope for this spec.
+
+| REQ Category | Coverage | Notes |
+|---|---|---|
+| **REQ-02 Law Authority & Citation** (10 reqs) | **Partial** | REQ-02-001 SOLAR: scripts enforce verbatim-text-only fetch, never synthesised. REQ-02-002 hot/cold vault: `law-packs/greece/` = hot vault, `pdfs/` = cold vault. REQ-02-003 temporal versioning: `effective_date` + `operative_until` in article frontmatter — partial. REQ-02-005 fallback chain: facade source priority loop. **REQ-02-010 jurisdiction config**: `jurisdiction.yaml` fully implements the schema. Gap: REQ-02-004 citation linter not yet in scripts. |
+| **REQ-03 Retrieval Strategy** (8 reqs) | **Covered** | Facade + registry + country self-registration implements the modular retrieval strategy. Source whitelist enforcement covers trusted-source-only retrieval. |
+| **REQ-05 Verification Gates** (10 reqs) | **Partial** | SHA256 manifest + `verify` command covers source verification. Citation linter (REQ-02-004) not in scope for this task — flagged as gap. |
+| **REQ-01 Fact Integrity** (10 reqs) | **Not in scope** | Layer 3 (case repo). T1/T2/T3 separation is the case repo's responsibility. |
+| **REQ-04 Agent Behavior** (13 reqs) | **Not in scope** | Skills layer. SOLAR pre-loading, CREAC structure, DA dispatch — implemented in skills. |
+| **REQ-06 Evidence Preservation** (9 reqs) | **Not in scope** | Layer 3 (case repo). SHA-256 + RFC 3161 timestamps apply to case evidence, not statute text. |
+| **REQ-07 Human Oversight** (9 reqs) | **Not in scope** | Skills layer. |
+| **REQ-08 Forum Sequencing** (8 reqs) | **Covered by existing T8-T10** | `law-packs/greece/forums.yaml` already implemented. |
+| **REQ-09–14** | **Not in scope** | Strategy, memory, OSINT, AI tooling, language — skills layer. |
+
+**Key gap identified:** REQ-02-004 (citation format linter) and REQ-02-003 (full operative-date-range checking per event date) are not in the current scripts design. These should be tracked as future tasks (T12+).
+
+---
+
+## 12. Deliverables Summary
 
 | # | Deliverable | Description |
 |---|---|---|
-| S1 | `scripts/pyproject.toml` | UV project with all dependencies |
+| S1 | `scripts/pyproject.toml` | UV project with all dependencies + test deps (pytest) |
 | S2 | `scripts/laws.py` | Fire CLI public API |
 | S3 | `scripts/core/` | base, registry, facade, settings (4 files) |
 | S4 | `scripts/shared/` | EurLexFetcher, NLexFetcher |
-| S5 | `scripts/greece/` | constants + 4 fetcher implementations |
-| S6 | `commands/lex-harness-setup.md` | `/lex-harness:setup` — runs `uv sync` via `${CLAUDE_PLUGIN_ROOT}` |
-| S7 | `commands/lex-harness-fetch.md` | `/lex-harness:fetch [id]` — invokes `laws.py fetch` via plugin root |
+| S5 | `scripts/greece/` | 4 fetcher implementations (constants.py removed — see J1) |
+| S6 | `scripts/tests/` | Unit + integration + lint tests |
+| S7 | `scripts/tools/lint_knowledge.py` | Knowledge base linter (frontmatter + case-content scan) |
+| S8 | `commands/lex-harness-setup.md` | `/lex-harness:setup` — runs `uv sync` via `${CLAUDE_PLUGIN_ROOT}` |
+| S9 | `commands/lex-harness-fetch.md` | `/lex-harness:fetch [id]` — invokes `laws.py fetch` via plugin root |
+| J1 | `law-packs/greece/jurisdiction.yaml` | Jurisdiction config object (REQ-02-010); replaces constants.py |
 | K1 | `docs/knowledge/README.md` | Knowledge base index |
 | K2 | `docs/knowledge/LEGAL_AI_FRAMEWORK.md` | Ported, stripped |
 | K3 | `docs/knowledge/greece/CORPUS_MAP.md` | Ported, stripped |
@@ -396,4 +555,5 @@ docs/knowledge/
 | K5 | `docs/knowledge/greece/LAW_SOURCES.md` | Ported, stripped |
 | K6 | `docs/knowledge/greece/sources/` (9 files) | Ported from 12_greek_legal_databases/ |
 | K7 | `docs/knowledge/greece/modules/consumer_protection.md` | Ported, stripped |
-| C1 | CLAUDE.md update | Add uv sync guard + knowledge base pointers |
+| R1 | `docs/knowledge/REQUIREMENTS.md` | 129 requirements ported from yestay (stripped of case refs) |
+| C1 | CLAUDE.md update | Add uv sync guard + knowledge base pointers + jurisdiction.yaml note |
