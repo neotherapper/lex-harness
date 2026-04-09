@@ -32,10 +32,12 @@ The site shows 5,479 laws, 22,681 presidential decrees, and 59,254 ministerial d
 
 ## Access and Registration
 
-- **Free**: Browse and read all legislation text
-- **Free account** (registration): Favorites, notes, extended history
-- **Subscription**: AI Assistant, advanced features, group packages
-- **Pricing**: Ατομική συνδρομή (individual) + Ομαδικά πακέτα (group) — pricing page at `/main/payment_methods` but not viewed in detail
+> **Correction (2026-04-08, verified via Chrome DevTools MCP):** The initial report incorrectly stated legislation text is freely readable. Browser inspection of the JS bundle and network traffic revealed that `openDocument()` is overridden to call `alertUnauthenticated()` — all article text, tree navigation, and full-text search require a paid subscription session cookie.
+
+- **Free**: Homepage search box + ΦΕΚ publication list only (no article text)
+- **Free account** (registration): Favorites, notes, extended history (article content still paywalled)
+- **Subscription**: Required to read any statute article text, case law, or tree navigation
+- **Pricing**: Ατομική συνδρομή (individual) + Ομαδικά πακέτα (group) — pricing page at `/main/payment_methods`
 
 ## Search Capabilities
 
@@ -133,6 +135,10 @@ Kodiko is the **fastest free tool** to look up and verify current codified text 
 
 ## Limitations
 
+- **All article content requires a paid subscription** — `openDocument()` JS function is overridden to `alertUnauthenticated()`; httpx scraping only retrieves the SPA shell (no statute text)
+- **Programmatic access is not possible without a paid session** — no public REST API; all data endpoints are authenticated
+- **`kodiko_url` IDs in laws-manifest.yaml are incorrect** — IDs in the 57000-range point to unrelated laws (e.g. Νόμος 3865/2010), not AK articles; correct IDs are unknown without a paid subscription
+- **Use alternatives for lex-harness fetching**: `source: manual` for AK/KPolD articles, `source: et_gr` for ΦΕΚ PDFs, `source: eur_lex` for EU-transposed statutes
 - Case law scope not confirmed from public interface (may be limited compared to Qualex)
 - AI assistant requires subscription — quality unverified
 - Forum content is user-generated (not authoritative)
