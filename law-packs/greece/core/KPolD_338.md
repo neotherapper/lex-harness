@@ -1,13 +1,13 @@
 ---
 article_id: KPolD_338
 short_name: "Burden of proof"
-source_primary: "https://www.kodiko.gr/nomologia/document_navigation/3962/kodikas-politikis-dikonomias"
-source_verification: "https://www.lawspot.gr/nomoi/kodikas-politikis-dikonomias/arthro-338"
+source_primary: "https://archive.raptarchis.gov.gr/wp-content/uploads/2020/11/THEMA11.12.pdf"
+source_verification: "https://archive.raptarchis.gov.gr/thema/politiki-dikonomia/politiki-dikonomia/thema-v-kodikas-politikis-dikonomias-neos/"
 effective_date: 1968-09-16
 repeal_date: null
-sha256: "<<TO-BE-COMPUTED>>"
+sha256: "3ac750a483192f3d"
 translation_status: el-only
-last_verified: 2026-04-07
+last_verified: 2026-04-09
 loaded_by: core
 cited_in_modules: [tenancy, procedure_eirinodikio]
 canonical_uri: "kodiko://KPolD/338"
@@ -17,7 +17,15 @@ canonical_uri: "kodiko://KPolD/338"
 
 ## Verbatim text (Greek)
 
-> <<FETCH-FROM-kodiko.gr>>
+
+
+> Άρθρο 338.
+> 1.Κάθε διάδικος οφείλει να αποδείξει τα
+> πραγματικά γεγονότα που είναι αναγκαία για να
+> υποστηρίξει την αυτοτελή αίτηση ή ανταίτησή του.
+> 2.Όταν ο νόμος ορίζει κάποιο τεκμήριο για την
+> ύπαρξη ενός πραγματικού γεγονότος, επιτρέπεται
+> αντίθετη απόδειξη, αν δεν ορίζεται διαφορετικά.
 
 ## English working translation (informal)
 
