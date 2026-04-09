@@ -57,6 +57,13 @@ After T4 the foundation wave is complete. The repo is on GitHub at https://githu
 | T11-scripts | ✅ DONE | PR #9 → `1164548` | Scripts layer: `jurisdiction.yaml`, Fire+UV CLI, BaseFetcher/registry/facade/settings, Greek fetchers (kodiko/et_gr/gslegal/hellenicparliament), shared EU fetchers (eur_lex/n_lex), `/lex-harness:setup` + `/lex-harness:fetch` commands, `lint_knowledge.py`, integration test scaffold. 24 unit tests passing. Design spec: `docs/superpowers/specs/2026-04-08-scripts-knowledge-base-design.md`. Plan: `docs/superpowers/plans/2026-04-08-scripts-layer.md`. |
 | T12-knowledge | ✅ DONE | PR #10 → `510ba36` | Knowledge base: 15 docs in `docs/knowledge/` — LEGAL_AI_FRAMEWORK, REQUIREMENTS, greece/CORPUS_MAP, COURT_AUTHORITY, LAW_SOURCES, 8 source profiles (et_gr/kodiko/areiospagos/nomiki_vivliothiki/isocrates_dsanet/lawspot/eur_lex/n_lex), consumer_protection module. All case-specific content stripped; linter passes 15/15. |
 
+### Fetcher fixes + statute text population — COMPLETE ✅
+
+| Task | Status | PR | Notes |
+|---|---|---|---|
+| fix-fetchers | ✅ DONE | PR #11 → `d60a9a1` | KodikoFetcher → NotImplementedError (kodiko.gr requires paid subscription; all article IDs in manifest were wrong). EtGrFetcher → added `_resolve_url()` for simplesearch auto-discovery (`POST https://searchetv99.azurewebsites.net/api/simplesearch`). Corrected kodiko_gr.md knowledge doc. |
+| fix-statute-text | ✅ DONE | PR #12 → `7d79835` | RaptarchisFetcher + populate_articles.py. All 30 article .md files populated with verbatim text from official gov.gr PDFs: AK from archive.raptarchis.gov.gr/THEMA812.pdf, KPolD from THEMA11.12.pdf, Syntagma_25 from hellenicparliament.gr FEK 211-A-24-12-2019 PDF. All source_primary URLs corrected, sha256 hashes computed. |
+
 ### Skill body wave — NOT STARTED
 
 | Task | Status | Notes |
